@@ -1,0 +1,236 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+
+//Estructuras//
+
+typedef struct
+{
+    char nombre[30];
+    char apellido[30];
+    int edad;
+}t_dato;
+
+typedef struct nodo
+{
+    t_dato info;
+    struct nodo *sig;
+}t_nodo;
+
+typedef t_nodo* t_pila;
+
+//Funciones//
+int poner_pila(t_pila*, const t_dato*);
+int sacar_pila(t_pila*,t_dato*);
+void crear_pila(t_pila*);
+int pilavacia(const t_pila*);
+int pila_llena(const t_pila*);
+int ver_tope(const t_pila*,t_dato*);
+void vaciar_pila(t_pila*);
+void cargar_dato(t_dato*);
+void cargar_dato(t_dato*);
+void mostrar_dato(t_dato*);
+void guardar_archivo(FILE*,t_pila*,t_dato*);
+
+//MAIN//
+
+void main()
+{
+    int opc,cont=1;
+    t_pila pila;
+    t_dato dato;
+    FILE*pf;
+    printf("*********MENU********\n\
+1-Crear Pila\n\
+2-Cargar Pila\n\
+3-Sacar de pila\n\
+4-Pila Vacia\n\
+5-Pila Llena\n\
+6-Ver Tope\n\
+7-Vaciar Pila\n\
+8-Guardar En Archivo\n\
+0-Salir\n\
+*********************\n\
+Ingrese Opcion:");
+scanf("%d",&opc);
+
+while(opc && opc!=0)
+{
+    switch(opc)
+    {
+        case 1:
+        crear_pila(&pila);
+        break;
+
+        case 2:
+            while(cont==1)
+            {
+                cargar_dato(&dato);
+                if(poner_pila(&pila,&dato)==0)
+                    printf("\n ERROR SIN MEMORIA");
+                printf("\n Desea otro? ");
+                scanf("%d",&cont);
+            }
+        break;
+
+        case 3:
+            while( sacar_pila(&pila,&dato)!=0)
+            {
+               mostrar_dato(&dato);
+            }
+        break;
+
+        case 4:
+            if(pilavacia(&pila)==1)
+                printf("\n LA PILA ESTA VACIA");
+            else
+                printf("\n LA PILA TIENE DATOS");
+        break;
+
+        case 5:
+            if(pila_llena(&pila)==1)
+                printf("\n LA PILA ESTA LLANO");
+            else
+                printf("\n LA PILA NO ESTA LLENA");
+        break;
+
+        case 6:
+                if(ver_tope(&pila,&dato)==0)
+                    printf("\n No Tiene Datos");
+                else
+                    mostrar_dato(&dato);
+        break;
+
+        case 7:
+                vaciar_pila(&pila);
+        break;
+
+        case 8:
+            pf=fopen("c:\\ArchivoProgram\\pila.txt","wt");
+                if(!pf)
+                {
+                    printf("\n ERROR");
+                     exit(1);
+                }
+            while(sacar_pila(&pila,&dato)!=0)
+            {
+
+                guardar_archivo(pf,&pila,&dato);
+
+            }
+            fclose(pf);
+
+        break;
+
+
+
+    }
+         printf("\nIngrese Opcion:");
+        scanf("%d",&opc);
+
+}
+
+
+}
+
+//Primitivas//
+
+int poner_pila(t_pila*p, const t_dato *dato)
+{
+    t_nodo *nue;
+    nue=(t_nodo*) malloc(sizeof(t_nodo));
+    if(!nue)
+    return 0;
+
+    nue->sig=*p;
+    *p=nue;
+    nue->info=*dato;
+
+    return 1;
+}
+
+
+int sacar_pila(t_pila* p,t_dato*dato)
+{
+    t_nodo*aux;
+    if(!*p)
+        return 0;
+
+    aux=*p;
+    *dato=aux->info;
+    *p=aux->sig;
+    free(aux);
+
+        return 1;
+}
+
+
+void crear_pila(t_pila*p)
+{
+    *p=NULL;
+}
+
+int pilavacia(const t_pila*p)
+{
+    return *p==NULL;
+}
+
+int pila_llena(const t_pila*p)        //SIRVE SOLO PARA ESTATICA.
+{
+    void*nue;
+    nue=malloc(sizeof(t_nodo));
+    free(nue);
+    return nue==NULL;
+}
+
+
+int ver_tope(const t_pila*p,t_dato*d)
+{
+        t_nodo *aux;
+        aux=*p;
+        if(!*p)
+            return 0;
+        *d=aux->info;
+        return 1;
+
+}
+
+void vaciar_pila(t_pila*p)
+{
+    t_nodo *aux;
+
+    while(*p)
+    {
+           aux=*p;
+           *p=aux->sig;
+           free(aux);
+    }
+
+}
+
+void mostrar_dato(t_dato*d)
+{
+    printf("\n *****Dato****");
+    printf("\n Nombre: ");
+    puts(d->nombre);
+    printf("\n Apellido: ");
+    puts(d->apellido);
+    printf("\n Edad: %d",d->edad);
+}
+
+void cargar_dato(t_dato*d)
+{
+    fflush(stdin);
+    printf("\n Ingrese Nombre: ");
+    gets(d->nombre);
+    printf("\n Ingrese apellido: ");
+    gets(d->apellido);
+    printf("\n Edad: ");
+    scanf("%d",&d->edad);
+}
+
+void guardar_archivo(FILE*arch,t_pila*p,t_dato*d)
+{
+
+    fprintf(arch,"%s|%s|%d\n",d->nombre,d->apellido,d->edad);
+}
