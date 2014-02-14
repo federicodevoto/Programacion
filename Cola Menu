@@ -1,0 +1,234 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#define SIN_MEMORIA 0
+#define TODO_OK 1
+#define COLA_VACIA 0;
+
+//Estructuras//
+
+typedef struct
+{
+    char nombre[30];
+    char apellido[30];
+    int edad;
+}t_dato;
+
+typedef struct s_nodo
+{
+    t_dato dato;
+    struct s_nodo *sig;
+}t_nodo;
+
+typedef struct
+{
+    t_nodo*pri;
+    t_nodo*ult;
+}t_cola;
+
+
+//Funciones//
+void crear_cola(t_cola*);
+int poner_cola(t_cola*,t_dato*);
+int sacar_cola(t_cola*,t_dato*);
+void vaciar_cola(t_cola*);
+int cola_vacia(t_cola*);
+int cola_llena(t_cola*);
+int ver_primero(t_cola*,t_dato*);
+void cargar_dato(t_dato*);
+void cargar_dato(t_dato*);
+void mostrar_dato(t_dato*);
+void guardar_archivo(FILE*,t_cola*,t_dato );
+void cargar_archivo(FILE*,t_cola*);
+
+//MAIN//
+
+void main()
+{
+    int opc,cont=1;
+    t_cola cola;
+    t_dato dato;
+    FILE*pf;
+    int cant,i;
+    printf("*********MENU********\n\
+1-Crear Cola\n\
+2-Cargar Cola\n\
+3-Sacar de Cola\n\
+4-Cola Vacia\n\
+5-Cola Llena\n\
+6-Ver Tope\n\
+7-Vaciar Cola\n\
+0-Salir\n\
+*********************\n\
+Ingrese Opcion:");
+scanf("%d",&opc);
+
+while(opc && opc!=0)
+{
+    switch(opc)
+    {
+        case 1:
+        crear_cola(&cola);
+        break;
+
+        case 2:
+            while(cont==1)
+            {
+                cargar_dato(&dato);
+                if(poner_cola(&cola,&dato)==0)
+                    printf("\n ERROR SIN MEMORIA");
+                printf("\n Desea otro? ");
+                scanf("%d",&cont);
+            }
+        break;
+
+        case 3:
+            while( sacar_cola(&cola,&dato)!=0)
+            {
+               mostrar_dato(&dato);
+            }
+        break;
+
+        case 4:
+            if(cola_vacia(&cola)==0)
+                printf("\n LA COLA ESTA VACIA");
+            else
+                printf("\n LA COLA TIENE DATOS");
+        break;
+
+        case 5:
+            if(cola_llena(&cola)==1)
+                printf("\n LA PILA ESTA LLANO");
+            else
+                printf("\n LA PILA NO ESTA LLENA");
+        break;
+
+        case 6:
+                if(ver_tope(&cola,&dato)==0)
+                    printf("\n No Tiene Datos");
+                else
+                    mostrar_dato(&dato);
+        break;
+
+        case 7:
+                vaciar_cola(&cola);
+        break;
+
+
+    }
+         printf("\nIngrese Opcion:");
+        scanf("%d",&opc);
+
+}
+
+
+}
+
+//Primitivas//
+
+void crear_cola(t_cola*pc)
+{
+    pc->pri=NULL;
+    pc->ult=NULL;
+}
+
+int poner_cola(t_cola*pc,t_dato*d)
+{
+    t_nodo*nue;
+    nue=(t_nodo*)malloc(sizeof(t_nodo));
+    if(!nue)
+        return SIN_MEMORIA;
+
+    nue->dato=*d;
+    nue->sig=NULL;
+
+    if(pc->pri==NULL)
+        pc->pri=nue;
+
+    else
+        pc->ult->sig=nue;
+
+    pc->ult=nue;
+    return TODO_OK;
+}
+
+int sacar_cola(t_cola*pc,t_dato*d)
+{
+    t_nodo*aux;
+    if(pc->pri==NULL)
+    {
+        return COLA_VACIA;
+    }
+
+    aux=pc->pri;
+    *d=aux->dato;
+
+    if(pc->ult!=NULL && pc->pri==pc->ult)
+        pc->ult=NULL;
+
+
+    pc->pri=aux->sig;
+    free(aux);
+
+    return TODO_OK;
+
+}
+
+void vaciar_cola(t_cola*pc)
+{
+    t_nodo *aux;
+    while(pc->pri!=NULL)
+    {
+        aux=pc->pri;
+        pc->pri=aux->sig;
+        free(aux);
+    }
+    pc->ult==NULL;
+}
+
+int cola_vacia(t_cola*pc)
+{
+    return pc->pri;
+}
+
+int cola_llena(t_cola*pc)
+{
+    t_nodo*nue;
+    nue=(t_nodo*)malloc(sizeof(t_nodo));
+    free(nue);
+    return nue==NULL;
+
+}
+
+int ver_tope(t_cola*pc,t_dato*d)
+{
+    if(pc->pri==NULL)
+    return COLA_VACIA;
+
+    *d=pc->pri->dato;
+
+    return TODO_OK;
+
+}
+
+
+void mostrar_dato(t_dato*d)
+{
+    printf("\n *****Dato****");
+    printf("\n Nombre: ");
+    puts(d->nombre);
+    printf("\n Apellido: ");
+    puts(d->apellido);
+    printf("\n Edad: %d",d->edad);
+}
+
+void cargar_dato(t_dato*d)
+{
+    fflush(stdin);
+    printf("\n Ingrese Nombre: ");
+    gets(d->nombre);
+    printf("\n Ingrese apellido: ");
+    gets(d->apellido);
+    printf("\n Edad: ");
+    scanf("%d",&d->edad);
+}
