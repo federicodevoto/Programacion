@@ -1,0 +1,81 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#define TAM 10
+#define COLA_CON_DATOS 1
+#define COLA_VACIA 0
+#define COLA_LLENA 1
+#define COLA_NO_LLENA 0
+#define TODO_OK 1
+
+typedef struct
+{
+    int pri;
+    int ult;
+    int num[TAM];
+}t_cola;
+
+void crear_cola(t_cola*p)
+{
+    p->pri=0;
+    p->ult=-1;
+}
+
+int cola_vacia(t_cola*p)
+{
+    if(p->pri!=0 && p->ult!=-1)
+        return COLA_CON_DATOS;
+
+        return COLA_VACIA;
+}
+
+int cola_llena(t_cola*p)
+{
+    if((p->ult+1==TAM && p->pri==0)||(p->ult+1==p->pri&&p->ult==0))
+        return COLA_LLENA;
+    return COLA_NO_LLENA;
+}
+
+int poner_cola(t_cola*p,t_dato*d)
+{
+    if(p->ult+1==TAM && p->pri==0)||(p->ult+1==p->pri&&p->ult==0))
+    return COLA_LLENA
+
+        p->num[p->ult]=*d;
+        p->ult=(pc->ult+1)%TAM;
+
+     return TODO_OK;
+
+}
+
+void vaciar_cola(t_cola*p)
+{
+     p->pri=0;
+    p->ult=-1;
+}
+
+int ver_primero(t_cola*p,t_dato*d)
+{
+    if(p->pri!=0 && p->ult!=-1)
+        return COLA_VACIA;
+    *d=p->num[p->pri];
+
+}
+
+int sacar_cola(t_cola*p,t_dato*d)
+{
+    if(p->pri!=0 && p->ult!=-1)
+        return COLA_VACIA;
+
+    *d=p->num[p->pri];
+
+    if(p->pri==p->ult)
+    {
+        p->pri=0;
+        p->ult=-1;
+    }
+    else
+    {
+        p->pri=(pc->pri+1)%TAM;
+    }
+}
