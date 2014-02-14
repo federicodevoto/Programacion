@@ -1,0 +1,190 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#define TAM 10
+#define PILA_LLENA 0
+#define TODO_OK 1
+#define PILA_VACIA 0
+
+
+//Estructura//
+typedef struct
+{
+    char nombre[30];
+    char apellido[30];
+    int edad;
+}t_dato;
+
+typedef struct
+{
+    t_dato pila [TAM];
+    int tope;
+}t_pila;
+
+//Funciones//
+void crear_pila(t_pila*);
+int poner_pila(t_pila*,t_dato*);
+int sacar_pila(t_pila*,t_dato*);
+void vaciar_pila(t_pila*);
+int ver_tope(t_pila*,t_dato*);
+int pila_vacia(t_pila*);
+int pila_llena(t_pila*);
+void mostrar_dato(t_dato*);
+void cargar_dato(t_dato*);
+
+//main//
+void main()
+{
+    int opc,cont=1;
+    t_pila pila;
+    t_dato dato;
+    FILE*pf;
+    int cant,i;
+    printf("*********MENU********\n\
+1-Crear Pila\n\
+2-Cargar Pila\n\
+3-Sacar de pila\n\
+4-Pila Vacia\n\
+5-Pila Llena\n\
+6-Ver Tope\n\
+7-Vaciar Pila\n\
+0-Salir\n\
+*********************\n\
+Ingrese Opcion:");
+scanf("%d",&opc);
+
+while(opc && opc!=0)
+{
+    switch(opc)
+    {
+        case 1:
+        crear_pila(&pila);
+        break;
+
+        case 2:
+            while(cont==1)
+            {
+                cargar_dato(&dato);
+                if(poner_pila(&pila,&dato)==0)
+                    printf("\n ERROR SIN MEMORIA");
+                printf("\n Desea otro? ");
+                scanf("%d",&cont);
+            }
+        break;
+
+        case 3:
+            while( sacar_pila(&pila,&dato)!=0)
+            {
+               mostrar_dato(&dato);
+            }
+        break;
+
+        case 4:
+            if(pila_vacia(&pila)==1)
+                printf("\n LA PILA ESTA VACIA");
+            else
+                printf("\n LA PILA TIENE DATOS");
+        break;
+
+        case 5:
+            if(pila_llena(&pila)==1)
+                printf("\n LA PILA ESTA LLANO");
+            else
+                printf("\n LA PILA NO ESTA LLENA");
+        break;
+
+        case 6:
+                if(ver_tope(&pila,&dato)==0)
+                    printf("\n No Tiene Datos");
+                else
+                    mostrar_dato(&dato);
+        break;
+
+        case 7:
+                vaciar_pila(&pila);
+        break;
+
+
+    }
+         printf("\nIngrese Opcion:");
+        scanf("%d",&opc);
+
+}
+
+
+}
+
+
+
+//Funciones//
+
+void crear_pila(t_pila*p)
+{
+    p->tope=0;
+}
+
+int poner_pila(t_pila*p,t_dato*d)
+{
+    if(p->tope==TAM)
+        return PILA_LLENA;
+
+    p->pila[p->tope]=*d;
+    p->tope++;
+    return TODO_OK;
+}
+
+int sacar_pila(t_pila*p,t_dato*d)
+{
+    if(p->tope==0)
+        return PILA_VACIA;
+    p->tope--;
+    *d=p->pila[p->tope];
+
+
+    return TODO_OK;
+}
+
+void vaciar_pila(t_pila*p)
+{
+    p->tope=0;
+}
+
+int ver_tope(t_pila*p,t_dato*d)
+{
+    if(p->tope==0)
+        return PILA_VACIA;
+    p->tope--;
+    *d=p->pila[p->tope];
+    return TODO_OK;
+}
+
+int pila_vacia(t_pila*p)
+{
+    return p->tope==0;
+}
+
+int pila_llena(t_pila*p)
+{
+    return p->tope==TAM;
+}
+
+void mostrar_dato(t_dato*d)
+{
+    printf("\n *****Dato****");
+    printf("\n Nombre: ");
+    puts(d->nombre);
+    printf("\n Apellido: ");
+    puts(d->apellido);
+    printf("\n Edad: %d",d->edad);
+}
+
+void cargar_dato(t_dato*d)
+{
+    fflush(stdin);
+    printf("\n Ingrese Nombre: ");
+    gets(d->nombre);
+    printf("\n Ingrese apellido: ");
+    gets(d->apellido);
+    printf("\n Edad: ");
+    scanf("%d",&d->edad);
+}
