@@ -1,0 +1,113 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define SIN_MEMORIA 0
+#define TODO_OK 1
+#define COLA_VACIA 0;
+
+
+typedef struct
+{
+    char nombre[30];
+    char apellido[30];
+    int edad;
+}t_dato;
+
+typedef struct s_nodo
+{
+    t_dato dato;
+    struct s_nodo *sig;
+}t_nodo;
+
+typedef struct
+{
+    t_nodo*pri;
+    t_nodo*ult;
+}t_cola;
+
+
+//Funciones//
+
+void crear_cola(t_cola*pc)
+{
+    pc->pri=NULL;
+    pc->ult=NULL;
+}
+
+int poner_cola(t_cola*pc,t_dato*d)
+{
+    t_nodo*nue;
+    nue=(t_nodo*)malloc(sizeof(t_nodo));
+    if(!nue)
+        return SIN_MEMORIA;
+
+    nue->dato=*d;
+    nue->sig=NULL;
+
+    if(pc->pri==NULL)
+        pc->pri=nue;
+
+    else
+        pc->ult->sig=nue;
+
+    pc->ult=nue;
+    return TODO_OK;
+}
+
+int sacar_cola(t_cola*pc,t_dato*d)
+{
+    t_nodo*aux;
+    if(pc->pri==NULL)
+    {
+        return COLA_VACIA;
+    }
+
+    aux=pc->pri;
+    *d=aux->dato;
+
+    if(pc->ult!=NULL && pc->pri=pc->ult)
+        pc->ult=NULL;
+
+
+    pc->pri=aux->sig;
+    free(aux);
+
+    return TODO_OK;
+
+}
+
+void vaciar_cola(t_cola*pc)
+{
+    t_nodo *aux;
+    while(pc->pri!=NULL)
+    {
+        aux=pc->pri;
+        pc->pri=aux->sig;
+        free(aux);
+    }
+    pc->ult==NULL;
+}
+
+int cola_vacia(t_cola*pc)
+{
+    return pc->pri;
+}
+
+int cola_llena(t_cola*pc)
+{
+    t_nodo*nue;
+    nue=(t_nodo*)malloc(sizeof(t_nodo));
+    free(nue);
+    return nue==NULL;
+
+}
+
+int ver_primero(t_cola*pc,t_dato*d)
+{
+    if(pc->pri==NULL)
+    return COLA_VACIA;
+
+    *d=pc->pri->dato;
+
+    return TODO_OK;
+
+}
