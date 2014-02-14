@@ -30,7 +30,8 @@ void vaciar_pila(t_pila*);
 void cargar_dato(t_dato*);
 void cargar_dato(t_dato*);
 void mostrar_dato(t_dato*);
-void guardar_archivo(FILE*,t_pila*,t_dato*);
+void guardar_archivo(FILE*,t_pila*,t_dato );
+void cargar_archivo(FILE*,t_pila*);
 
 //MAIN//
 
@@ -40,6 +41,7 @@ void main()
     t_pila pila;
     t_dato dato;
     FILE*pf;
+    int cant,i;
     printf("*********MENU********\n\
 1-Crear Pila\n\
 2-Cargar Pila\n\
@@ -49,6 +51,7 @@ void main()
 6-Ver Tope\n\
 7-Vaciar Pila\n\
 8-Guardar En Archivo\n\
+9-Cargar de Archivo\n\
 0-Salir\n\
 *********************\n\
 Ingrese Opcion:");
@@ -106,7 +109,7 @@ while(opc && opc!=0)
         break;
 
         case 8:
-            pf=fopen("c:\\ArchivoProgram\\pila.txt","wt");
+            pf=fopen("c:\\ArchivoProgram\\pila.txt","wb");
                 if(!pf)
                 {
                     printf("\n ERROR");
@@ -115,13 +118,32 @@ while(opc && opc!=0)
             while(sacar_pila(&pila,&dato)!=0)
             {
 
-                guardar_archivo(pf,&pila,&dato);
+                guardar_archivo(pf,&pila,dato);
 
             }
             fclose(pf);
 
         break;
 
+        case 9:
+            pf=fopen("c:\\ArchivoProgram\\pila.txt","rb");
+            if(!pf)
+                exit(1);
+
+            fseek(pf,0,2);
+            cant=ftell(pf)/sizeof(t_dato);
+
+
+            for(i=0;i<cant;i++)
+            {
+                fseek(pf,-sizeof(t_dato),1);
+                fseek(pf,0,1);
+                fread(&dato,sizeof(t_dato),1,pf);
+                poner_pila(&pila,&dato);
+                fseek(pf,-sizeof(t_dato),1);
+            }
+            fclose(pf);
+        break;
 
 
     }
@@ -186,11 +208,10 @@ int pila_llena(const t_pila*p)        //SIRVE SOLO PARA ESTATICA.
 
 int ver_tope(const t_pila*p,t_dato*d)
 {
-        t_nodo *aux;
-        aux=*p;
+
         if(!*p)
             return 0;
-        *d=aux->info;
+        *d=(*p)->info;
         return 1;
 
 }
@@ -229,8 +250,9 @@ void cargar_dato(t_dato*d)
     scanf("%d",&d->edad);
 }
 
-void guardar_archivo(FILE*arch,t_pila*p,t_dato*d)
+void guardar_archivo(FILE*arch,t_pila*p,t_dato d)
 {
 
-    fprintf(arch,"%s|%s|%d\n",d->nombre,d->apellido,d->edad);
+    fwrite(&d,sizeof(t_dato),1,arch);
 }
+
