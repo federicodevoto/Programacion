@@ -1,0 +1,58 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+void cadena1(char*); //muestra cadena
+void cadena2(char*); //muestra cadena al reves
+void cadena3(char*,int); //muestra cadena disminuyendo letra
+
+
+
+void main()
+{
+    char cad[5]="HOLA";
+    printf("*\n");
+    cadena1(cad);
+    printf("*\n\n");
+    printf("*\n");
+    cadena2(cad);
+    printf("*\n\n");
+    printf("*\n");
+    cadena3(cad,5-1);
+     printf("*\n\n");
+}
+
+void cadena1(char*c)
+{
+    if(!*c)
+        return;
+    printf("%c\n",*c);
+    cadena1(c+1);
+}
+
+void cadena2(char*c)
+{
+    if(!*c)
+        return;
+    cadena2(c+1);
+    printf("%c\n",*c);
+}
+
+void cadena3(char*c,int tam)
+{
+    char *pc;
+    int i;
+    pc=c;
+    if(!*c || tam==0)
+        return;
+
+
+          cadena3(pc,tam-1);
+    for(i=0;i<tam;i++)
+   {
+       printf("%c",*c);
+       c++;
+   }
+   printf("\n");
+
+}
+
