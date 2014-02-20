@@ -1,0 +1,42 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+void numero(int); // muestra al reves y al derecho
+void numero2(int);
+
+
+void main()
+{
+    int num=1234;
+    printf("*\n");
+    numero(num);
+    printf("*\n");
+    numero2(num);
+    printf("*\n");
+
+
+}
+
+void numero(int n)
+{
+     if(n!=0)
+   {
+    printf("%d\n",n%10);
+    numero(n / 10);
+    printf("%d\n",n%10);
+   }
+ else printf ("*\n");
+
+}
+
+void numero2(int n)
+{
+     if(n!=0)
+   {
+    printf("%d\n",n);
+    numero2(n / 10);
+    printf("%d\n",n);
+
+   }
+
+}
