@@ -1,0 +1,27 @@
+#include<conio.h>
+#include<stdio.h>
+
+
+void main()
+{int n;
+        srand(time(NULL));
+        n=rand()%10;
+
+        printf("NUMERO ALEATORIO ENTRE 0 y 9");
+        printf("\n %d",n);
+
+        n=4+(rand()%7);
+        printf("\nNumero entre 4 y 10");
+        printf("\n %d",n);
+
+        n=(-4)+(rand()%18);
+        printf("\nNumero entre -4 y 10");
+        printf("\n %d",n);
+
+         n=(-40)+(rand()%(-20));
+        printf("\nNumero entre -40 y -20");
+        printf("\n %d",n);
+}
+
+
+
