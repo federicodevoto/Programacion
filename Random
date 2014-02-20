@@ -14,7 +14,7 @@ void main()
         printf("\nNumero entre 4 y 10");
         printf("\n %d",n);
 
-        n=(-4)+(rand()%18);
+        n=(-4)+(rand()%11);
         printf("\nNumero entre -4 y 10");
         printf("\n %d",n);
 
