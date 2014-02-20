@@ -35,8 +35,10 @@ void numero2(int n)
    {
     printf("%d\n",n);
     numero2(n / 10);
+    if(n!=1)
     printf("%d\n",n);
 
    }
 
 }
+
