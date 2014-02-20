@@ -1,0 +1,30 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+void asterisco(int,char);
+
+
+void main()
+{
+   char c='*';
+   asterisco(6,c);
+}
+
+void asterisco(int cant,char c)
+{
+    int i;
+    if(cant==0)
+        return;
+    for(i=0;i<cant;i++)
+    {
+        printf("%c",c);
+    }
+    printf("\n");
+    asterisco(cant-1,c);
+
+    for(i=0;i<cant;i++)
+    {
+        printf("%c",c);
+    }
+    printf("\n");
+}
