@@ -19,11 +19,14 @@ void asterisco(int cant,char c)
     {
         printf("%c",c);
     }
+    if(cant!=1)
     printf("\n");
     asterisco(cant-1,c);
 
+
     for(i=0;i<cant;i++)
     {
+        if(cant!=1)
         printf("%c",c);
     }
     printf("\n");
