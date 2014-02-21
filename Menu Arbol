@@ -324,6 +324,7 @@ int mostrar_contar_nodos_izquierda(t_arbol*p)
             printf("%d ",(*p)->dato.num);
             return 1+mostrar_contar_nodos_izquierda(&(*p)->der)+mostrar_contar_nodos_izquierda(&(*p)->izq);
         }
+         return mostrar_contar_nodos_izquierda(&(*p)->der)+mostrar_contar_nodos_izquierda(&(*p)->izq);
 
     }
     return 0;
@@ -336,8 +337,9 @@ int mostrar_contar_nodos_SOLO_izquierda(t_arbol*p)
         if((*p)->izq!=NULL && (*p)->der==NULL)
         {
             printf("%d ",(*p)->dato.num);
-            return 1+mostrar_contar_nodos_izquierda(&(*p)->der)+mostrar_contar_nodos_izquierda(&(*p)->izq);
+            return 1+mostrar_contar_nodos_izquierda(&(*p)->izq);
         }
+         return mostrar_contar_nodos_izquierda(&(*p)->der)+mostrar_contar_nodos_izquierda(&(*p)->izq);
 
     }
     return 0;
