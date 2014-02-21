@@ -1,0 +1,360 @@
+#include <stdio.h>
+#include<stdlib.h>
+#define CLAVE_DUPLICADA 0
+#define SIN_MEMORIA 0
+#define TODO_BIEN 1
+
+//**********ESTRUCTURAS**********//
+typedef struct
+{
+    int num;
+}t_dato;
+
+typedef struct s_nodo
+{
+    struct s_nodo *izq;
+    t_dato dato;
+    struct s_nodo *der;
+}t_nodo;
+
+typedef t_nodo* t_arbol;
+
+//***********PROTOTIPOS**********//
+void crearArbol(t_arbol*);
+void abrirArchivo(FILE**,char*);
+void ingresarDato(t_dato*);
+int cargarArbolR(t_arbol*,t_dato*);
+int comparar(t_dato*, t_dato*);
+void preOrden(t_arbol*);
+void posOrden(t_arbol*);
+void inOrden(t_arbol*);
+void guardarArchivoPre(FILE*,t_arbol*);
+void cargar_desdeArch(FILE*,t_arbol*);
+int mostrar_contar_hojas(t_arbol*);
+int contar_nodos(t_arbol*);
+int mostrar_contar_nohojas(t_arbol*);
+int mostrar_contar_nodos_izquierda(t_arbol*);//mostrar nodos con hijos izquierda
+int mostrar_contar_nodos_SOLO_izquierda(t_arbol*);// muestra nodos solo con hijos por izquierda
+int contar_nodos_pares(t_arbol*);
+
+
+//**********MAIN**********//
+void main()
+{
+    t_dato dato;
+    t_arbol raiz;
+    FILE *pf;
+    int opc;
+
+    printf("\n*****MENU ARBOL*****\
+\n1- Crear arbol\
+\n2- Cargar arbol\
+\n3- Mostrar arbol\
+\n4- Guardar en archivo\
+\n5- Cargar desde archivo\
+\n6- Mostrar Hojas\
+\n7- Contar Nodos\
+\n8- Mostrar hojas de subarbol derecho\
+\n9- Mostrar No Hojas\
+\n10 Mostrar Nodos con hijos por izquierda\
+\n11 Mostrar Nodos con SOLO hijos por izquierda\
+\n12 Contar Nodos Clave Par\
+\n\nIngrese una opcion: ");
+    scanf("%d",&opc);
+    while(opc)
+    {
+        switch(opc)
+        {
+        case 1:
+            crearArbol(&raiz);
+            printf("\nSe creo el arbol");
+        break;
+
+        case 2:
+
+            ingresarDato(&dato);
+            while(dato.num!=0)
+            {
+
+                if(cargarArbolR(&raiz,&dato))
+                    printf("\nSe cargo el dato");
+                else
+                    printf("\nError de carga");
+                ingresarDato(&dato);
+            }
+
+        break;
+
+        case 3:
+            printf("\nArbol recorrido en preorden\n");
+            preOrden(&raiz);
+            printf("\nArbol recorrido en posorden\n");
+            posOrden(&raiz);
+            printf("\nArbol recorrido en inorden\n");
+            inOrden(&raiz);
+
+        break;
+
+        case 4:
+            abrirArchivo(&pf,"wb");
+            guardarArchivoPre(pf,&raiz);
+            printf("\nSe guardo el arbol en el archivo");
+            fclose(pf);
+        break;
+
+        case 5:
+                abrirArchivo(&pf,"rb");
+                cargar_desdeArch(pf,&raiz);
+                 fclose(pf);
+        break;
+
+        case 6:
+                printf("\nHojas: ");
+                printf("\nCantidad de hojas: %d",mostrar_contar_hojas(&raiz));
+        break;
+
+        case 7:
+                printf("\nCantidad NODOS: %d",contar_nodos(&raiz));
+        break;
+        case 8:
+                if(raiz->der)
+                {
+                    printf("\nHojas Subarbol: ");
+                    printf("\nCantidad de hojas: %d",mostrar_contar_hojas(&(raiz->der)));
+                }
+                else
+                    printf("\n NO HAY SUBARBOL DERECHO");
+
+        break;
+        case 9:
+                printf("\nNo Hojas: ");
+                printf("\nCantidad de No Hojas: %d",mostrar_contar_nohojas(&raiz));
+        break;
+        case 10:
+                printf("\nNodos con hijos por izquierda");
+                printf("\nCantidad: %d",mostrar_contar_nodos_izquierda(&raiz));
+        break;
+        case 11:
+                printf("\nNodos con hijos SOLO por izquierda");
+                printf("\nCantidad: %d",mostrar_contar_nodos_SOLO_izquierda(&raiz));
+        break;
+        case 12:
+                printf("\nCantidad: %d",contar_nodos_pares(&raiz));
+        break;
+
+
+
+        }
+   printf("\n*****MENU ARBOL*****\
+\n1- Crear arbol\
+\n2- Cargar arbol\
+\n3- Mostrar arbol\
+\n4- Guardar en archivo\
+\n5- Cargar desde archivo\
+\n6- Mostrar Hojas\
+\n7- Contar Nodos\
+\n8- Mostrar hojas de subarbol derecho\
+\n9- Mostrar No Hojas\
+\n10 Mostrar Nodos con hijos por izquierda\
+\n11 Mostrar Nodos con SOLO hijos por izquierda\
+\n12 Contar Nodos Clave Par\
+\n\nIngrese una opcion: ");
+    scanf("%d",&opc);
+    }
+
+}
+
+//**********FUNCIONES**********//
+void crearArbol(t_arbol *pa)
+{
+    *pa=NULL;
+}
+
+void abrirArchivo(FILE **file,char *modo)
+{
+    *file=fopen("C:\\ArchivoProgram\\Arbol.dat",modo);
+    if(!file)
+    {
+        printf("NO SE PUDO ABRIR EL ARCHIVO\n");
+        exit(1);
+    }
+}
+
+void preOrden(t_arbol *pa)
+{
+    if(*pa)
+    {
+        printf("%d ",(*pa)->dato.num);
+        if((*pa)->izq) //PRESCINDIBLE
+            preOrden(&(*pa)->izq);
+        if((*pa)->der) //PRESCINDIBLE
+            preOrden(&(*pa)->der);
+    }
+}
+
+void posOrden(t_arbol *pa)
+{
+    if(*pa)
+    {
+        if((*pa)->izq)
+            posOrden(&(*pa)->izq);
+        if((*pa)->der)
+            posOrden(&(*pa)->der);
+        printf("%d ",(*pa)->dato.num);
+    }
+}
+
+void inOrden(t_arbol *pa)
+{
+    if(*pa)
+    {
+        if((*pa)->izq)
+            inOrden(&(*pa)->izq);
+        printf("%d ",(*pa)->dato.num);
+        if((*pa)->der)
+            inOrden(&(*pa)->der);
+    }
+}
+
+void ingresarDato(t_dato *d)
+{
+    printf("\nIngrese el dato: ");
+    scanf("%d",&d->num);
+}
+
+int cargarArbolR(t_arbol *pa,t_dato *d)
+{
+    int cmp;
+    if(*pa)
+    {
+        cmp=comparar(d,&(*pa)->dato);
+        if(cmp==0)
+            return CLAVE_DUPLICADA;
+        if(cmp<0)
+            cargarArbolR(&(*pa)->izq,d);
+        else
+            cargarArbolR(&(*pa)->der,d);
+    }
+    else // si encontre NULL
+    {
+        *pa=(t_nodo*)malloc(sizeof(t_nodo));
+        if(!*pa)
+            return SIN_MEMORIA;
+        (*pa)->izq=(*pa)->der=NULL;
+        (*pa)->dato=*d;
+        return TODO_BIEN;
+    }
+}
+
+int comparar(t_dato *d1,t_dato *d2)
+{
+    return (d1->num)-(d2->num);
+}
+
+void guardarArchivoPre(FILE *file,t_arbol *pa)
+{
+    if(*pa)
+    {
+
+        fwrite(&(*pa)->dato,sizeof(t_dato),1,file);
+        if((*pa)->izq)
+            guardarArchivoPre(file,&(*pa)->izq);
+        if((*pa)->der)
+            guardarArchivoPre(file,&(*pa)->der);
+    }
+}
+
+void cargar_desdeArch(FILE *pf,t_arbol *pa)
+{
+    t_dato reg;
+
+    fread(&reg,sizeof(t_dato),1,pf);
+    while(!feof(pf))
+    {
+        cargarArbolR(pa,&reg);
+        fread(&reg,sizeof(t_dato),1,pf);
+    }
+}
+
+int mostrar_contar_hojas(t_arbol*pa)
+{
+      if(*pa)
+    {
+
+        if((*pa)->izq==NULL &&(*pa)->der==NULL)
+        {
+            printf("%d ",(*pa)->dato.num);
+            return 1;
+        }
+
+            return mostrar_contar_hojas(&(*pa)->der)+mostrar_contar_hojas(&(*pa)->izq);
+    }
+    return 0;
+
+}
+
+int contar_nodos(t_arbol*pa)
+{
+    if(*pa)
+        return 1+contar_nodos(&(*pa)->der)+contar_nodos(&(*pa)->izq);
+    else
+        return 0;
+}
+
+int mostrar_contar_nohojas(t_arbol*p)
+{
+    if(*p)
+    {
+        if((*p)->izq!=NULL || (*p)->der!=NULL)
+        {
+            printf("%d ",(*p)->dato.num);
+            return 1+mostrar_contar_nohojas(&(*p)->der)+mostrar_contar_nohojas(&(*p)->izq);
+        }
+
+    }
+    return 0;
+}
+
+int mostrar_contar_nodos_izquierda(t_arbol*p)
+{
+     if(*p)
+    {
+        if((*p)->izq!=NULL)
+        {
+            printf("%d ",(*p)->dato.num);
+            return 1+mostrar_contar_nodos_izquierda(&(*p)->der)+mostrar_contar_nodos_izquierda(&(*p)->izq);
+        }
+
+    }
+    return 0;
+}
+
+int mostrar_contar_nodos_SOLO_izquierda(t_arbol*p)
+{
+     if(*p)
+    {
+        if((*p)->izq!=NULL && (*p)->der==NULL)
+        {
+            printf("%d ",(*p)->dato.num);
+            return 1+mostrar_contar_nodos_izquierda(&(*p)->der)+mostrar_contar_nodos_izquierda(&(*p)->izq);
+        }
+
+    }
+    return 0;
+}
+
+int contar_nodos_pares(t_arbol*p)
+{
+    if(*p)
+    {
+        if((*p)->dato.num%2==0)
+        {
+            printf("%d ",(*p)->dato.num);
+            return 1+contar_nodos_pares(&(*p)->izq)+contar_nodos_pares(&(*p)->der);
+        }
+        return contar_nodos_pares(&(*p)->izq)+contar_nodos_pares(&(*p)->der);
+
+    }
+    return 0;
+}
+
