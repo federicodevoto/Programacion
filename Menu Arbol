@@ -40,7 +40,9 @@ t_arbol buscarClave(t_arbol*,int);
 int contarNodosAPartirdeClave(t_arbol*,int);
 void sumarHojas(t_arbol*, int*);
 int alturaArbol(t_arbol*);
-
+int contar_nodos_Altura(t_arbol*,int,int*);
+int contar_nodos_HastaA(t_arbol*,int,int*);
+int contar_nodos_DesdeA(t_arbol*,int,int*);
 
 //**********MAIN**********//
 void main()
@@ -48,9 +50,9 @@ void main()
     t_dato dato;
     t_arbol raiz, dir;
     FILE *pf;
-    int opc,clave,cont;
+    int opc,clave,cont,nivel;
     float promedio;
-    printf("\n*****MENU ARBOL*****\n\
+        printf("\n\n*****MENU ARBOL*****\n\
 1- Crear arbol\n\
 2- Cargar arbol\n\
 3- Mostrar arbol\n\
@@ -60,13 +62,16 @@ void main()
 7- Mostrar y contar hojas del arbol\n\
 8- Contar hojas del subarbol derecho\n\
 9- Mostrar y contar NO hojas del arbol\n\
-10- Mostrar nodos con hijos por izquierda\n\
-11- Mostrar nodos con hijos solo por izquierda\n\
-12- Contar nodos con clave par\n\
-13- Buscar nodo por clave\n\
-14- Contar nodos a partir de una clave dada\n\
-15- Promedio hojas\n\
-16- Altura del arbol\n\
+10 Mostrar nodos con hijos por izquierda\n\
+11 Mostrar nodos con hijos solo por izquierda\n\
+12-Contar nodos con clave par\n\
+13 Buscar nodo por clave\n\
+14-_Contar nodos a partir de una clave dada\n\
+15-Promedio hojas\n\
+16-Altura del arbol\n\
+17 Contar nodos Altura\n\
+18 Contar Nodos Hasta Altura\n\
+19 Contar Nodos Desde altura\n\
 \n\nIngrese una opcion: ");
     scanf("%d",&opc);
     while(opc)
@@ -180,6 +185,30 @@ void main()
         case 16:
             printf("\nLa altura del arbol es %d",alturaArbol(&raiz));
         break;
+
+        case 17:
+                    printf("\n Ingrese Altura: ");
+                    scanf("%d",&nivel);
+                    cont=0;
+                    contar_nodos_Altura(&raiz,nivel,&cont);
+                    printf("\n Cantidad de nodos de la Altura %d: %d",nivel,cont);
+        break;
+
+        case 18:
+                    printf("\n ingrese Altura: ");
+                    scanf("%d",&nivel);
+                    cont=0;
+                    contar_nodos_HastaA(&raiz,nivel,&cont);
+                    printf("\n Cantidad de Nodos Hasta la Altura %d: %d",nivel,cont);
+        break;
+
+        case 19:
+                    printf("\n ingrese Altura: ");
+                    scanf("%d",&nivel);
+                    cont=0;
+                    contar_nodos_DesdeA(&raiz,nivel,&cont);
+                    printf("\n Cantidad de Nodos Desde la Altura %d: %d",nivel,cont);
+        break;
         }
         printf("\n\n*****MENU ARBOL*****\n\
 1- Crear arbol\n\
@@ -191,13 +220,16 @@ void main()
 7- Mostrar y contar hojas del arbol\n\
 8- Contar hojas del subarbol derecho\n\
 9- Mostrar y contar NO hojas del arbol\n\
-10- Mostrar nodos con hijos por izquierda\n\
-11- Mostrar nodos con hijos solo por izquierda\n\
-12- Contar nodos con clave par\n\
-13- Buscar nodo por clave\n\
-14- Contar nodos a partir de una clave dada\n\
-15- Promedio hojas\n\
-16- Altura del arbol\n\
+10 Mostrar nodos con hijos por izquierda\n\
+11 Mostrar nodos con hijos solo por izquierda\n\
+12-Contar nodos con clave par\n\
+13 Buscar nodo por clave\n\
+14-_Contar nodos a partir de una clave dada\n\
+15-Promedio hojas\n\
+16-Altura del arbol\n\
+17 Contar nodos Altura\n\
+18 Contar Nodos Hasta Altura\n\
+19 Contar Nodos  Desde altura\n\
 \n\nIngrese una opcion: ");
     scanf("%d",&opc);
     }
@@ -437,3 +469,46 @@ int alturaArbol(t_arbol *pa)
     return 0;
 }
 
+int contar_nodos_Altura(t_arbol *p,int nivel,int*c)
+{
+
+ if (*p)
+ {
+     if(nivel-1==0)
+     {
+         (*c)++;
+     }
+     else
+     {
+         contar_nodos_Altura(&(*p)->der,nivel-1,c);
+         contar_nodos_Altura(&(*p)->izq,nivel-1,c);
+     }
+ }
+
+}
+
+int contar_nodos_HastaA(t_arbol*p,int nivel,int*c)
+{
+    if(*p &&nivel>0)
+    {
+        (*c)++;
+        contar_nodos_HastaA(&(*p)->der,nivel-1,c);
+        contar_nodos_HastaA(&(*p)->izq,nivel-1,c);
+    }
+}
+
+int contar_nodos_DesdeA(t_arbol*p,int nivel,int*c)
+{
+
+    if(*p )
+    {
+        if(nivel<=0)
+        {
+        (*c)++;
+        }
+
+         contar_nodos_DesdeA(&(*p)->der,nivel-1,c);
+         contar_nodos_DesdeA(&(*p)->izq,nivel-1,c);
+    }
+
+}
