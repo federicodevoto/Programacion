@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+//**********ESTRUCTURAS**********//
+typedef struct
+{
+    int clave;
+}t_dato;
+
+
+typedef struct s_nodo
+{
+    struct s_nodo* izq;
+    t_dato dato;
+    struct s_nodo*der;
+}t_nodo;
+
+typedef t_nodo* t_arbol;
+
+//**********PROTOTIPOS**********//
+void abrirArchivo(FILE**,char*);
+void mostrarArchivo(FILE *);
+void crearArbol(t_arbol*);
+void generarIndice(FILE *,t_arbol *,int,int,int);
+int cargarArbol(t_arbol*,t_dato*);
+int comparar(t_dato*,t_dato*);
+void preOrden(t_arbol*);
+
+//**********MAIN**********//
+void main()
+{
+    FILE *pf;
+    t_arbol raiz;
+    int lf;
+
+    abrirArchivo(&pf,"rb");
+    mostrarArchivo(pf);
+
+    crearArbol(&raiz);
+    printf("\n\n");
+    fseek(pf,0,2);
+    lf=ftell(pf)/sizeof(t_dato);
+    generarIndice(pf,&raiz,0,lf,lf);
+
+    preOrden(&raiz);
+    fclose(pf);
+}
+
+//**********FUNCIONES**********//
+void abrirArchivo(FILE **file,char *modo)
+{
+    *file=fopen("c:\\ArchivoProgram\\Indice.dat",modo);
+    if(!file)
+    {
+        printf("NO SE PUDO ABRIR EL ARCHIVO\n");
+        exit(1);
+    }
+}
+
+void mostrarArchivo(FILE *file)
+{
+    int cont=1;
+    t_dato dato;
+    fread(&dato.clave,sizeof(int),1,file);
+    while(!(feof(file)))
+    {
+        printf("\nReg %d: %d",cont,dato.clave);
+        cont++;
+        fread(&dato.clave,sizeof(int),1,file);
+    }
+}
+
+void crearArbol(t_arbol *pa)
+{
+    *pa=NULL;
+}
+
+void generarIndice(FILE* file,t_arbol *pa,int li,int lf,int reg)
+{
+    int mit;
+    t_dato dat;
+
+    if(li<=lf && li!=reg)
+    {
+        mit=(lf+li)/2;
+        fseek(file,sizeof(t_dato)*mit,0);
+        fread(&dat,sizeof(t_dato),1,file);
+        cargarArbol(pa,&dat);
+        generarIndice(file,pa,li,mit-1,reg);
+        generarIndice(file,pa,mit+1,lf,reg);
+    }
+}
+
+int cargarArbol(t_arbol *pa,t_dato *d)
+{
+    int cmp;
+
+    if(*pa)
+    {
+        cmp=comparar(&(*pa)->dato,d);
+        if(cmp<0)
+            cargarArbol(&(*pa)->izq,d);
+        if(cmp>0)
+            cargarArbol(&(*pa)->der,d);
+    }
+
+    else
+    {
+        *pa=(t_nodo*)malloc(sizeof(t_nodo));
+        if(!(*pa))
+            return 0;
+        (*pa)->izq=(*pa)->der=NULL;
+        (*pa)->dato=*d;
+        return 1;
+    }
+}
+
+int comparar(t_dato *d1,t_dato *d2)
+{
+    return (d2->clave)-(d1->clave);
+}
+
+void preOrden(t_arbol *pa)
+{
+    if(*pa)
+    {
+        printf("%d \n",(*pa)->dato.clave);
+        if((*pa)->izq) //PRESCINDIBLE
+            preOrden(&(*pa)->izq);
+        if((*pa)->der) //PRESCINDIBLE
+            preOrden(&(*pa)->der);
+    }
+}
