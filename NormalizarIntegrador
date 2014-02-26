@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void normalizar(char*);
+void normalizarNombre(char *);
 
 void main()
 {
@@ -10,31 +10,39 @@ void main()
     puts(cad);
 }
 
-void normalizar(char*c)
+void normalizarNombre(char *nom)
 {
-    char* pe,*pl;
-   pl=c;
+    char *esc, *lec;
+    char aux;
 
-   while(*pl && *pl!=' ')
-             pl++;
-   *pl=',';
-   pl++;
-   pe=pl-1;
+    esc=lec=nom;
+    if(*esc>='a' && *esc<='z')
+        *esc-=32;
 
-    while(*pl)
+    while((*lec>='a' && *lec<='z') || (*lec>='A' && *lec<='Z'))
     {
-        pe++;
-        while(*pl && *pl==' ')
-        pl++;
-
-        *pe=*pl;
-        if('a'<=*pe && *pe<='z')
-            *pe-=32;
-        pe++;
-        *pe='.';
-        while(*pl && *pl!=' ')
-            pl++;
+        lec++;
+        esc++;
     }
-    pe++;
-    *pe='\0';
+    *esc=',';
+    esc++;
+    lec++;
+    while(*lec)
+    {
+        while(*lec && *lec==' ')
+            lec++;
+        aux=*lec;
+        *esc=' ';
+        esc++;
+        lec++;
+        *esc=aux;
+        if(*esc>='a' && *esc<='z')
+            *esc-=32;
+        esc++;
+        *esc='.';
+        esc++;
+        while(*lec && *lec!=' ')
+            lec++;
+    }
+    *esc='\0';
 }
