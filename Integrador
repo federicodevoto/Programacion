@@ -1,0 +1,473 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define TAM 50
+#define SIN_MEMORIA 0
+#define TODO_OK 1
+#define COLA_VACIA 0
+//Estructuras datos//
+
+typedef struct //estructura para archivo de texto
+{
+    int nrocli;
+    char nombre[TAM];
+}t_texto;
+
+typedef struct
+{
+    t_texto texto;
+    int saldo;
+}t_dato_pila;
+
+typedef struct
+{
+    int nrocli;
+    int cod;
+    int mes;
+}t_dato_cola;
+
+typedef struct
+{
+    int reg;
+    int nrocli;
+}t_dato_indice;
+
+// Nodos//
+
+typedef struct s_nodo_pila
+{
+    t_dato_pila dato;
+    struct s_nodo_pila*sig;
+}t_nodo_pila;
+
+typedef t_nodo_pila*t_pila;
+
+typedef struct s_nodo_cola
+{
+   t_dato_cola dato;
+    struct s_nodo_cola*sig;
+}t_nodo_cola;
+
+typedef struct
+{
+    t_nodo_cola*pri;
+    t_nodo_cola*ult;
+}t_cola;
+
+typedef struct s_nodo_arbol
+{
+    struct s_nodo_arbol*izq;
+    t_dato_indice dato;
+    struct s_nodo_arbol*der;
+}t_nodo_arbol;
+typedef t_nodo_arbol*t_arbol;
+
+//////////////////////////////////////////////
+void  crear_cola(t_cola*);
+void  crear_lista(t_pila*);
+void crear_arbol(t_arbol*);
+void cargar_dato(t_dato_cola*);
+int poner_cola(t_cola*,t_dato_cola*);
+int sacar_pila(t_pila*,t_dato_pila*);
+void preOrden(t_arbol*);
+int sacar_cola(t_cola*,t_dato_cola*);
+void abrirArchivo(FILE**,char*);
+void abrirArchivo2(FILE **file,char *modo);
+int poner_pila(t_pila*, const t_dato_pila*);
+int cargarArbol(t_arbol *,t_dato_indice*);
+int insertar_en_orden(t_pila*,t_dato_pila*);
+void generarIndice(FILE*,t_arbol*,int,int,int);
+int comparar(t_dato_pila*,t_dato_pila*);
+void mostrar_archivo(FILE*);
+void mostrar_dato(t_dato_pila*);
+int comparar2(t_dato_indice *,t_dato_indice *);
+int buscarClave(t_arbol *,int );
+
+//////////////////////////////////////////////
+void main()
+{
+  t_dato_pila dato_pila;
+  t_dato_pila dato_lista;
+  t_dato_pila dato_archivo;
+  t_texto dato_texto;
+  t_dato_cola dato_cola;
+  t_dato_indice dato_indice;
+  t_pila pila;
+  t_cola cola;
+  t_arbol raiz;
+
+  FILE *pf;
+  FILE *pftexto;
+  int opc,cont=1,reg;
+  int lf;
+  int mat[6][12]={{25,25,25,30,30,30,35,35,35,40,40,40}
+  ,{10,10,10,15,15,15,20,20,30,30,40,50},
+  {5,5,5,5,5,5,10,10,10,10,10,10},
+  {100,100,100,100,100,150,150,150,150,150,200,200},
+  {120,120,122,124,126,128,129,130,132,134,136,137},
+  {40,50,60,70,80,90,100,100,120,130,140,150}};
+  crear_cola(&cola);
+  crear_lista(&pila);
+  crear_arbol(&raiz);
+  printf("////////MENU///////////\n\
+1-Cargar Cola\n\
+2-Mostrar Archivo\n\
+3-Generar Indice\n\
+4-Mostrar Lista\n\
+5-Mostrar Pila\n\
+6-Mostrar Arbol Preorden\n\
+7-Ejecutar\n\n\
+Ingrese opcion: ");
+scanf("%d",&opc);
+
+while(opc &&opc!=0)
+  {
+    switch(opc)
+    {
+        case 1:
+            while(cont!=0)
+            {
+                cargar_dato(&dato_cola);
+                if(poner_cola(&cola,&dato_cola)==0)
+                    printf("\n SIN MEMORIA");
+                printf("\n Desea Otro?: ");
+                scanf("%d",&cont);
+            }
+        break;
+
+        case 2:
+            abrirArchivo(&pf,"rb");
+            mostrar_archivo(pf);
+            fclose(pf);
+        break;
+
+        case 3:
+            abrirArchivo(&pf,"rb");
+            fseek(pf,0,2);
+            lf=ftell(pf)/sizeof(t_dato_pila);
+            generarIndice(pf,&raiz,0,lf,lf);
+            fclose(pf);
+        break;
+
+
+        case 5:
+           while( sacar_pila(&pila,&dato_pila)!=0)
+            {
+               mostrar_dato(&dato_pila);
+            }
+        break;
+
+        case 6:
+            preOrden(&raiz);
+        break;
+
+        case 7:
+            abrirArchivo2(&pftexto,"wt");
+            abrirArchivo(&pf,"r+b");
+           while(sacar_cola(&cola,&dato_cola))
+           {
+                reg=buscarClave(&raiz,dato_cola.nrocli);
+                reg++;
+                printf("%d",reg);
+            fseek(pf,sizeof(t_dato_pila)*(reg-1),0);
+            fread(&dato_archivo,sizeof(t_dato_pila),1,pf);
+            //normalizar(&dato_archivo.texto.nombre);
+
+            dato_archivo.saldo-=mat[dato_cola.cod][dato_cola.mes-1];
+
+            if(dato_archivo.saldo==0)
+            {
+                strcpy(dato_texto.nombre,dato_archivo.texto.nombre);
+                dato_texto.nrocli=dato_archivo.texto.nrocli;
+
+                fprintf(pftexto,"%d|%s",dato_texto.nrocli,dato_texto.nombre);
+            }
+            if(dato_archivo.saldo<0)
+            {
+                poner_pila(&pila,&dato_archivo);
+            }
+            /*if(dato_archivo.saldo>0)
+            {
+                 insertar_en_orden(&lista,&dato_lista);
+            }
+            */
+
+            fseek(pf,-sizeof(t_dato_pila),1);
+            fwrite(&dato_archivo,sizeof(t_dato_pila),1,pf);
+
+           }
+
+            fclose(pf);
+            fclose(pftexto);
+
+        break;
+
+    }
+    printf("////////MENU///////////\n\
+1-Cargar Cola\n\
+2-Mostrar Archivo\n\
+3-Generar Indice\n\
+4-Mostrar Lista\n\
+5-Mostrar Pila\n\
+6-Mostrar Arbol Preorden\n\
+7-Ejecutar\n\n\
+Ingrese opcion: ");
+scanf("%d",&opc);
+
+    }
+
+
+}
+
+
+//////////////////////////////////////////////////
+
+void cargar_dato(t_dato_cola*d)
+{
+    printf("\n Ingrese Cliente: ");
+    scanf("%d",&d->nrocli);
+    printf("\n Ingrese Cod(0-5): ");
+    scanf("%d",&d->cod);
+    printf("\n Ingrese mes (1-12): ");
+    scanf("%d",&d->mes);
+
+}
+
+
+int poner_cola(t_cola*pc,t_dato_cola*d)
+{
+    t_nodo_cola*nue;
+    nue=(t_nodo_cola*)malloc(sizeof(t_nodo_cola));
+    if(!nue)
+        return SIN_MEMORIA;
+
+    nue->dato=*d;
+    nue->sig=NULL;
+
+    if(pc->pri==NULL)
+        pc->pri=nue;
+
+    else
+        pc->ult->sig=nue;
+
+    pc->ult=nue;
+    return TODO_OK;
+}
+
+void  crear_cola(t_cola*pc)
+{
+      pc->pri=NULL;
+    pc->ult=NULL;
+}
+
+void  crear_lista(t_pila*pp)
+{
+    *pp=NULL;
+}
+
+void crear_arbol(t_arbol*pa)
+{
+    *pa=NULL;
+}
+
+void abrirArchivo(FILE **file,char *modo)
+{
+    *file=fopen("c:\\ArchivoProgram\\integrador.txt",modo);
+    if(!file)
+    {
+        printf("NO SE PUDO ABRIR EL ARCHIVO\n");
+        exit(1);
+    }
+}
+
+void abrirArchivo2(FILE **file,char *modo)
+{
+    *file=fopen("c:\\ArchivoProgram\\integradorTexto.txt",modo);
+    if(!file)
+    {
+        printf("NO SE PUDO ABRIR EL ARCHIVO\n");
+        exit(1);
+    }
+}
+
+
+void mostrar_archivo(FILE*pfi)
+{
+    t_dato_pila dato;
+    fseek(pfi,0,0);
+    fread(&dato,sizeof(t_dato_pila),1,pfi);
+    while(!feof(pfi))
+    {
+        printf("\n***************");
+        fflush(stdin);
+        printf("\n Nro Cliente:%d ",dato.texto.nrocli);
+        printf(" Apellido: ");
+        puts(dato.texto.nombre);
+        printf(" Saldo: %d",dato.saldo);
+        printf("\n***************");
+        fread(&dato,sizeof(t_dato_pila),1,pfi);
+
+    }
+}
+
+int sacar_pila(t_pila* p,t_dato_pila*dato)
+{
+    t_nodo_pila*aux;
+    if(!*p)
+        return 0;
+
+    aux=*p;
+    *dato=aux->dato;
+    *p=aux->sig;
+    free(aux);
+
+        return 1;
+}
+
+
+void mostrar_dato(t_dato_pila*d)
+{
+    printf("\n *****Dato****");
+    printf("\n Nombre: ");
+    puts(d->texto.nombre);
+    printf("\n saldo: %d ",d->saldo);
+
+}
+
+void preOrden(t_arbol *pa)
+{
+    if(*pa)
+    {
+        printf("dato: %d, REG: %d",(*pa)->dato.nrocli,(*pa)->dato.reg);
+        if((*pa)->izq) //PRESCINDIBLE
+            preOrden(&(*pa)->izq);
+        if((*pa)->der) //PRESCINDIBLE
+            preOrden(&(*pa)->der);
+    }
+}
+
+int sacar_cola(t_cola*pc,t_dato_cola*d)
+{
+    t_nodo_cola*aux;
+    if(pc->pri==NULL)
+    {
+        return COLA_VACIA;
+    }
+
+    aux=pc->pri;
+    *d=aux->dato;
+
+    if(pc->ult!=NULL && pc->pri==pc->ult)
+        pc->ult=NULL;
+
+
+    pc->pri=aux->sig;
+    free(aux);
+
+    return TODO_OK;
+
+}
+
+int buscarClave(t_arbol *pa,int cla)
+{
+    int cmp;
+    if(*pa)
+    {
+        cmp=cla-((*pa)->dato.nrocli);
+        if(cmp==0)
+            return (*pa)->dato.reg;
+        if(cmp<0)
+            buscarClave(&(*pa)->izq,cla);
+        else
+            buscarClave(&(*pa)->der,cla);
+    }
+    else
+       return 0;
+}
+
+
+int poner_pila(t_pila*p, const t_dato_pila *dato)
+{
+    t_nodo_pila *nue;
+    nue=(t_nodo_pila*) malloc(sizeof(t_nodo_pila));
+    if(!nue)
+    return 0;
+
+    nue->sig=*p;
+    *p=nue;
+    nue->dato=(*dato)*(-1);
+
+    return 1;
+}
+
+int insertar_en_orden(t_pila*p,t_dato_pila*d)
+{
+    t_nodo_pila*nue;
+
+    while(*p&&comparar(&(*p)->dato,d)<0)
+            p=&(*p)->sig;
+
+    if(*p && !comparar(&(*p)->dato,d))
+        //Tratar Duplicados
+
+    nue=(t_nodo_pila*) malloc(sizeof(t_nodo_pila));
+    if(!nue)
+        return SIN_MEMORIA; //no pude reservar
+
+    nue->dato=*d;
+    nue->sig=*p;
+    *p=nue;
+
+    return TODO_OK; //Lo agrega.
+}
+
+void generarIndice(FILE* file,t_arbol *pa,int li,int lf,int reg)
+{
+    int mit;
+    t_dato_indice dat;
+    t_dato_pila dato;
+
+    if(li<=lf && li!=reg)
+    {
+        mit=(lf+li)/2;
+        fseek(file,sizeof(t_dato_pila)*mit,0);
+        fread(&dato,sizeof(t_dato_pila),1,file);
+        dat.nrocli=dato.texto.nrocli;
+        dat.reg=mit;
+        cargarArbol(pa,&dat);
+        generarIndice(file,pa,li,mit-1,reg);
+        generarIndice(file,pa,mit+1,lf,reg);
+    }
+}
+
+int cargarArbol(t_arbol *pa,t_dato_indice *d)
+{
+    int cmp;
+
+    if(*pa)
+    {
+        cmp=comparar2(&(*pa)->dato,d);
+        if(cmp<0)
+            cargarArbol(&(*pa)->izq,d);
+        if(cmp>0)
+            cargarArbol(&(*pa)->der,d);
+    }
+
+    else
+    {
+        *pa=(t_nodo_arbol*)malloc(sizeof(t_nodo_arbol));
+        if(!(*pa))
+            return 0;
+        (*pa)->izq=(*pa)->der=NULL;
+        (*pa)->dato=*d;
+        return 1;
+    }
+}
+int comparar(t_dato_pila *d1,t_dato_pila *d2)
+{
+    return (d2->texto.nrocli)-(d1->texto.nrocli);
+}
+int comparar2(t_dato_indice *d1,t_dato_indice *d2)
+{
+    return (d2->nrocli)-(d1->nrocli);
+}
