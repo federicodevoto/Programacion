@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+void normalizar(char*);
+
+void main()
+{
+    char cad[50]="Homero      J     Simpson";
+    normalizar(cad);
+    puts(cad);
+}
+
+void normalizar(char*c)
+{
+    char* pe,*pl;
+   pl=c;
+
+   while(*pl && *pl!=' ')
+             pl++;
+   *pl=',';
+   pl++;
+   pe=pl-1;
+
+    while(*pl)
+    {
+        pe++;
+        while(*pl && *pl==' ')
+        pl++;
+
+        *pe=*pl;
+        if('a'<=*pe && *pe<='z')
+            *pe-=32;
+        pe++;
+        *pe='.';
+        while(*pl && *pl!=' ')
+            pl++;
+    }
+    pe++;
+    *pe='\0';
+}
