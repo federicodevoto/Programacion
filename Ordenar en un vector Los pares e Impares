@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<stdlib.h>
+#define TAM 20
+
+void cargarVector(int *);
+void mostrarVector(int*);
+void ordenarVector(int*); // Agrupa pares e impares
+
+void main()
+{
+    int vec[TAM];
+    cargarVector(vec);
+    printf("\n VECTOR: ");
+    mostrarVector(vec);
+    ordenarVector(vec);
+    printf("\n VECTOR MODIFICADO: ");
+    mostrarVector(vec);
+}
+
+void cargarVector(int *v)
+{
+    int i;
+    srand(time(NULL)); // Para tener distintos numeros en cada ejecucion.
+    for(i=0;i<TAM;i++)
+    {
+        *v=(1+rand()%1000);
+        v++;
+    }
+}
+
+void mostrarVector(int *v)
+{
+    int i;
+    for(i=0;i<TAM;i++)
+    {
+        printf("%d ",*v);
+        v++;
+    }
+}
+
+void ordenarVector(int *v)//ordena: PARES IMPARES
+{
+    int *impar,i,aux; //Utilizo 2 puntos, v=par y impar;
+    impar=v+TAM-1;//mando al final
+
+    while(v!=impar)
+    {
+        if(*v%2==0) // es par
+            v++;
+        else
+        {
+            if(*impar%2!=0) // es impar
+                impar--;
+            else // invierto y sigo
+            {
+                aux=*v;
+                *v=*impar;
+                *impar=aux;
+                impar--;
+                v++;
+            }
+        }
+    }
+
+}
