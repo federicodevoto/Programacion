@@ -43,7 +43,7 @@ void ordenarVector(int *v)//ordena: PARES IMPARES
     int *impar,i,aux; //Utilizo 2 puntos, v=par y impar;
     impar=v+TAM-1;//mando al final
 
-    while(v!=impar)
+    while(v!=impar && v<impar)
     {
         if(*v%2==0) // es par
             v++;
