@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+#define TAM 50
+
+int anagramas(char*,char*);
+
+void main()
+{
+    char cad1[TAM];
+    char cad2[TAM];
+
+    printf("\nIngrese cadena: ");
+    gets(cad1);
+    printf("\nIngrese cadena: ");
+    gets(cad2);
+
+    printf(anagramas(cad1,cad2)==1?"ES ANAGRAMA":"NO ES ANAGRAMA");
+
+}
+
+int anagramas(char*c1,char*c2)
+{
+    char aux;
+    char*pc1;
+    char*pc2;
+    char*pOrig1;
+    int cont1=0,cont2=0;
+    pOrig1=c1;
+    pc1=c1;
+    pc2=c2;
+    if(strcmp(c1,c2)==0)
+        return 0;
+
+    while(*c1 && *c2)
+    {
+        while(*c1 && (*c1)==' ')
+            c1++;
+        aux=(*c1);
+        while(*c1 && *pc1)
+        {
+            if(*pc1==aux)
+                cont1++;
+            pc1++;
+        }
+        pc1=pOrig1;
+        c1++;
+
+        while(*c2 && (*pc2))
+        {
+            if(*pc2==aux)
+                cont2++;
+            pc2++;
+        }
+        pc2=c2;
+        if(cont1!=cont2)
+            return 0;
+
+        cont1=cont2=0;
+    }
+    return 1;
+
+
+}
